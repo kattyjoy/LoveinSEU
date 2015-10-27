@@ -42,6 +42,7 @@ def register():
 			token = 'Haveresiger'
 			id=''
 	except Exception, e:
+		print e
 		state = 'fail'
 		reason ='异常'
 		token = 'exception'
@@ -725,28 +726,14 @@ def getrecommenduser():
 			token = request.json['token']
 			u=getuserinformation(token)
 	 		if u != None:
-				recommend = getranduser(u.gender)
-				if len(recommend)==4:
+				L = getranduser(token)
+				if len(L)>0:
 					state = 'successful'
 					reason = ''
+					result = [{"id":getuserbyid(recommend).id,"name":getuserbyid(recommend).name,"gender":getuserbyid(recommend).gender,"school":getuserbyid(recommend).school} for recommend in L]
 					response = jsonify({'state':state,
 										'reason':reason,
-										'result':[{"id":recommend[0].id,
-													"name":recommend[0].name,
-													"gender":recommend[0].gender,
-													"school":recommend[0].school},
-													{"id":recommend[1].id,
-													"name":recommend[1].name,
-													"gender":recommend[1].gender,
-													"school":recommend[1].school},
-													{"id":recommend[2].id,
-													"name":recommend[2].name,
-													"gender":recommend[2].gender,
-													"school":recommend[2].school},
-													{"id":recommend[3].id,
-													"name":recommend[3].name,
-													"gender":recommend[3].gender,
-													"school":recommend[3].school}]
+										'result':result
 					 	                })
 
 				else:
@@ -777,5 +764,6 @@ def getrecommenduser():
 
 		return response
 
+
 if __name__ == '__main__':
-	app.run(host=os.getenv('IP','0.0.0.0'),port=int(os.getenv('PORT',8080)),debug=True)
+	app.run(host=os.getenv('IP','0.0.0.0'),port=int(os.getenv('PORT',8080)))
