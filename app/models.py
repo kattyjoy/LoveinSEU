@@ -113,6 +113,57 @@ class Activity(db.Model):
 
 	
 		
+	
+def editschooldb(token,school,degree,department,enrollment):
+	u=User.query.filter_by(token=token).first()
+
+	if u!=None:
+		u.school = school
+		u.degree = degree
+		u.department = department
+		u.enrollment = enrollment
+		try:
+			db.session.add(u)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			db.session.rollback()
+			return 1   
+	else:
+		return 2 
+
+def editpersonaldb(token,name,gender,birthday,phone):
+	u=User.query.filter_by(token=token).first()
+	if u!=None:
+		u.name = name
+		u.gender = gender
+		u.birthday = birthday
+		u.phone = phone
+		try:
+			db.session.add(u)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			db.session.rollback()
+			return 1   
+	else:
+		return 2 
+
+def editpreferdb(token,hobby,preference):
+	u=User.query.filter_by(token=token).first()
+	if u!=None:
+		u.hobby = hobby
+		u.preference = preference
+		try:
+			db.session.add(u)
+			db.session.commit()
+			return 0
+		except Exception, e:
+			db.session.rollback()
+			return 1   
+	else:
+		return 2 
+
 
 
 def editDBcolumn(token,modifycol,valuecol):
@@ -193,8 +244,8 @@ def getranduser(token):
 	f2 = u.followeds.all()
 	L2 = [y.followed_id for y in f2]
 	L = list(set(L1).difference(set(L2)))
-	if len(L)>3:	
-		return random.sample(L,4)
+	if len(L)>7:	
+		return random.sample(L,8)
 	elif len(L)==0:
 		return []
 	else:

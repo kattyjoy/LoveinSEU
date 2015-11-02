@@ -107,9 +107,9 @@ def uploadavatar():
 			elif type=="2":
 				dst = '/home/www/picture/autumn-1/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type=="3":
-				dst = '/home/www/picture/autumn-2' + str(id)+'-'+str(type)+'-'+str(number)
+				dst = '/home/www/picture/autumn-2/' + str(id)+'-'+str(type)+'-'+str(number)
 			elif type =="4":
-				dst = '/home/www/picture/autumn-2' + str(id)+'-'+str(type)+'-'+str(number)
+				dst = '/home/www/picture/autumn-3/' + str(id)+'-'+str(type)+'-'+str(number)
 			else:
 				dst = '/home/www/avatar/' + str(id)
 
@@ -140,6 +140,7 @@ def uploadavatar():
 						'state':state,
 						'reason':reason})
 	return response
+
 
 
 
@@ -360,25 +361,25 @@ def getactivityinformation():
 @app.route("/editprofile/editschoolinformation",methods=['POST'])
 def editschoolinformation():
 	try:
-		token = request.json['token']
+		print 'hello'
+		token = request.json[u'token']
+		print token
 		school = request.json['school']
 		degree = request.json['degree']
 		department = request.json['department']
 		enrollment = request.json['enrollment']
 
-		writestate_school = editDBcolumn(token,'school',school)
-		writestate_degree = editDBcolumn(token,'degree',degree)
-		writestate_department=editDBcolumn(token,'department',department)
-		writestate_enrollment=editDBcolumn(token,'enrollment',enrollment)
-		if not (writestate_school or writestate_degree or writestate_department or writestate_enrollment):
+		writestate = editschooldb(token,school,degree,department,enrollment)
+		if not writestate:
 			state = 'successful'
 			reason = ''
+		elif writestate == 2:
+			state = 'fail'
+			reason = 'no user'
 		else:
 			state = 'fail'
-			reason = '用户不存在'
+			reason = 'db error'
 
-		# state='s'
-		# reason= 'r'
 	except Exception, e:
 		print e
 		state = 'fail'
@@ -392,27 +393,28 @@ def editschoolinformation():
 @app.route("/editprofile/editpersonalinformation",methods=['POST'])
 def editpersonalinformation():
 	try:
-		token = request.json['token']
+		
+		token = request.json[u'token']
 		name = request.json['name']
 		gender = request.json['gender']
 		birthday = request.json['birthday']
 		phone = request.json['phone']
 
-		writestate_name=editDBcolumn(token,'name',name)
-		writestate_gender=editDBcolumn(token,'gender',gender)
-		writestate_birthday=editDBcolumn(token,'birthday',birthday)
-		writestate_phone = editDBcolumn(token,'phone',phone)
-		if not (writestate_name or writestate_gender or writestate_birthday or writestate_phone):
+		writestate = editpersonaldb(token,name,gender,birthday,phone)
+		if not writestate:
 			state = 'successful'
 			reason = ''
+		elif writestate == 2:
+			state = 'fail'
+			reason = 'no user'
 		else:
 			state = 'fail'
-			reason = '用户不存在'
+			reason = 'db error'
+
 	except Exception, e:
 		print e
 		state = 'fail'
 		reason ='异常'
-	
 
 	response = jsonify({'state':state,
 		                'reason':reason})
@@ -424,15 +426,17 @@ def editpreferinformation():
 		token = request.json['token']
 		hobby = request.json['hobby']
 		preference = request.json['preference']
-
-		writestate_hobby=editDBcolumn(token,'hobby',hobby)
-		writestate_preference=editDBcolumn(token,'preference',preference)
-		if not (writestate_hobby or writestate_preference):
+		writestate = editpreferdb(token,hobby,preference)
+		if not writestate:
 			state = 'successful'
 			reason = ''
+		elif writestate == 2:
+			state = 'fail'
+			reason = 'no user'
 		else:
 			state = 'fail'
-			reason = '用户不存在'
+			reason = 'db error'
+
 	except Exception, e:
 		print e
 		state = 'fail'
